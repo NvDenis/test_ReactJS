@@ -20,6 +20,7 @@ const TableUsers = () => {
     const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
     const [isShowModalEdit, setShowModalEdit] = useState(false);
     const [isShowModalDelete, setShowModalDelete] = useState(false);
+    const [dataExport, setDataExport] = useState([]);
 
     // const [sortBy, setSortBy] = useState('asc');
     // const [sortField, setSortField] = useState('id')
@@ -105,6 +106,28 @@ const TableUsers = () => {
         ["Yezzi", "Min l3b", "ymin@cocococo.com"]
     ];
 
+    const getUsersExport = (event, done) => {
+        let data = [];
+        if (listUsers && listUsers.length > 0) {
+            data.push(['Id', 'Email', 'First name', 'Last name']);
+            listUsers.map(item => {
+                let arr = [];
+                arr[0] = item.id
+                arr[1] = item.email
+                arr[2] = item.first_name
+                arr[3] = item.last_name
+                data.push(arr);
+            })
+            setDataExport(data);
+            done();
+
+        }
+
+
+
+
+    }
+
     return (
         <>
             <div className='my-3 add-new'>
@@ -119,12 +142,14 @@ const TableUsers = () => {
                     </label>
                     <input id='duycute' type='file' hidden />
 
-                    
+
 
                     <CSVLink
-                        data={csvData}
+                        data={dataExport}
                         filename={"users.csv"}
                         className="btn btn-primary"
+                        asyncOnClick={true}
+                        onClick={getUsersExport}
                     >
                         <i class="fa-solid fa-file-arrow-down"></i>  Export
 
