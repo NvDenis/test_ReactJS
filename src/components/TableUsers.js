@@ -86,8 +86,7 @@ const TableUsers = () => {
 
     const handleSearch = debounce((e) => {
         let term = e.target.value;
-        console.log(term);
-        if (term) {
+            if (term) {
             let cloneListUsers = listUsers.slice();
 
             cloneListUsers = cloneListUsers.filter(item => item.email.includes(term));
