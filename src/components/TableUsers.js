@@ -4,8 +4,9 @@ import { fecthAllUser } from '../services/UserServices';
 import ReactPaginate from 'react-paginate';
 import ModalAddNewUser from './ModalAddNewUser';
 import ModalEditUser from './ModalEditUser';
-import { _ , debounce } from "lodash"
+import { _, debounce } from "lodash"
 import ModalDeleteUser from './ModalDeleteUser';
+import { CSVLink, CSVDownload } from "react-csv";
 import './TableUsers.scss'
 
 const TableUsers = () => {
@@ -86,7 +87,7 @@ const TableUsers = () => {
 
     const handleSearch = debounce((e) => {
         let term = e.target.value;
-            if (term) {
+        if (term) {
             let cloneListUsers = listUsers.slice();
 
             cloneListUsers = cloneListUsers.filter(item => item.email.includes(term));
@@ -97,11 +98,48 @@ const TableUsers = () => {
         }
     }, 500)
 
+    const csvData = [
+        ["firstname", "lastname", "email"],
+        ["Ahmed", "Tomi", "ah@smthing.co.com"],
+        ["Raed", "Labes", "rl@smthing.co.com"],
+        ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+    ];
+
     return (
         <>
             <div className='my-3 add-new'>
                 <span>List Users:</span>
-                <button className='btn btn-success' onClick={() => setIsShowModalAddNew(true)}>add new user</button>
+                <div className='group-btns'>
+
+                    <label
+                        className='btn btn-warning'
+                        htmlFor='duycute'
+                    >
+                        <i class="fa-solid fa-file-import"></i>  Import
+                    </label>
+                    <input id='duycute' type='file' hidden />
+
+                    
+
+                    <CSVLink
+                        data={csvData}
+                        filename={"users.csv"}
+                        className="btn btn-primary"
+                    >
+                        <i class="fa-solid fa-file-arrow-down"></i>  Export
+
+                    </CSVLink>
+
+                    <button
+                        className='btn btn-success'
+                        onClick={() => setIsShowModalAddNew(true)
+                        }>
+                        <i className="fa-solid fa-circle-plus"></i>  Add new
+
+
+                    </button>
+                </div>
+
             </div>
 
             <div className='col-4 my-3'>
