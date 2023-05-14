@@ -3,13 +3,16 @@ import Table from 'react-bootstrap/Table';
 import { fecthAllUser } from '../services/UserServices';
 import ReactPaginate from 'react-paginate';
 import ModalAddNewUser from './ModalAddNewUser';
+import ModalEditUser from './ModalEditUser';
 
 const TableUsers = () => {
 
-    const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
     const [listUsers, setListUsers] = useState([]);
     const [totalUsers, setTotalUsers] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
+    const [isShowModalEdit, setShowModalEdit] = useState(false);
+    const [dataUserEdit, setDataUserEdit] = useState("");
 
     useEffect(() => {
         getUsers(1);
@@ -30,10 +33,16 @@ const TableUsers = () => {
 
     const handleClose = () => {
         setIsShowModalAddNew(false);
+        setShowModalEdit(false);
     }
 
     const handleUpdateTable = (user) => {
         setListUsers([user, ...listUsers])
+    }
+
+    const handleEditUser = (user) => {
+        setShowModalEdit(true);
+        setDataUserEdit(user);
     }
 
 
@@ -51,6 +60,7 @@ const TableUsers = () => {
                         <th>Email</th>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,7 +71,16 @@ const TableUsers = () => {
                                     <td>{item.id}</td>
                                     <td>{item.email}</td>
                                     <td>{item.first_name}</td>
-                                    <td>@{item.last_name}</td>
+                                    <td>{item.last_name}</td>
+                                    <td>
+                                        <button
+                                            className='btn btn-warning mx-3'
+                                            onClick={() => handleEditUser(item)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button className='btn btn-danger'>Delete</button>
+                                    </td>
                                 </tr>
                             )
                         })
@@ -94,6 +113,11 @@ const TableUsers = () => {
                 show={isShowModalAddNew}
                 handleClose={handleClose}
                 handleUpdateTable={handleUpdateTable}
+            />
+            <ModalEditUser
+                show={isShowModalEdit}
+                handleClose={handleClose}
+                dataUserEdit={dataUserEdit}
             />
         </>)
 }
