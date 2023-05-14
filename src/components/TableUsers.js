@@ -4,7 +4,7 @@ import { fecthAllUser } from '../services/UserServices';
 import ReactPaginate from 'react-paginate';
 import ModalAddNewUser from './ModalAddNewUser';
 import ModalEditUser from './ModalEditUser';
-import _ from "lodash"
+import { _ , debounce } from "lodash"
 import ModalDeleteUser from './ModalDeleteUser';
 import './TableUsers.scss'
 
@@ -20,8 +20,8 @@ const TableUsers = () => {
     const [isShowModalEdit, setShowModalEdit] = useState(false);
     const [isShowModalDelete, setShowModalDelete] = useState(false);
 
-    const [sortBy, setSortBy] = useState('asc');
-    const [sortField, setSortField] = useState('id')
+    // const [sortBy, setSortBy] = useState('asc');
+    // const [sortField, setSortField] = useState('id')
 
     useEffect(() => {
         getUsers(1);
@@ -76,20 +76,41 @@ const TableUsers = () => {
     }
 
     const handleSort = (sortBy, sortField) => {
-        setSortBy(sortBy);
-        setSortField(sortField);
+        // setSortBy(sortBy);
+        // setSortField(sortField);
         let cloneListUsers = _.cloneDeep(listUsers);
         cloneListUsers = _.orderBy(cloneListUsers, [sortField], [sortBy]);
         setListUsers(cloneListUsers);
     }
 
-    console.log('check sort', sortBy, sortField);
+
+    const handleSearch = debounce((e) => {
+        let term = e.target.value;
+        console.log(term);
+        if (term) {
+            let cloneListUsers = listUsers.slice();
+
+            cloneListUsers = cloneListUsers.filter(item => item.email.includes(term));
+            setListUsers(cloneListUsers);
+
+        } else {
+            getUsers(1);
+        }
+    }, 500)
 
     return (
         <>
             <div className='my-3 add-new'>
                 <span>List Users:</span>
                 <button className='btn btn-success' onClick={() => setIsShowModalAddNew(true)}>add new user</button>
+            </div>
+
+            <div className='col-4 my-3'>
+                <input
+                    className='form-control'
+                    placeholder='Search by email'
+                    onChange={e => handleSearch(e)}
+                />
             </div>
 
             <Table striped bordered hover>
