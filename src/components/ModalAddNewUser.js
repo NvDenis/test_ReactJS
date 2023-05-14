@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 
 const ModalAddNewUser = (props) => {
-    
+
     const { show, handleClose, handleUpdateTable } = props;
     const [name, setName] = useState("");
     const [job, setJob] = useState("");
@@ -14,12 +14,12 @@ const ModalAddNewUser = (props) => {
     const handleSaveUser = async () => {
         let res = await postCreateUser(name, job)
 
-        if(res && res.id) {
+        if (res && res.id) {
             handleClose();
             setName('')
             setJob('')
             toast.success('User is created succeed')
-            handleUpdateTable({id: res.id, first_name: name})
+            handleUpdateTable({ id: res.id, first_name: name })
         } else {
             toast.error('An error...')
         }
@@ -27,7 +27,12 @@ const ModalAddNewUser = (props) => {
 
     return (
         <>
-            <Modal show={show} onHide={handleClose}>
+            <Modal
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>Add new user</Modal.Title>
                 </Modal.Header>

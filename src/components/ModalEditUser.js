@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 
 const ModalEditUser = (props) => {
-    
+
     const { show, handleClose, dataUserEdit, handleEditUserFromModal } = props;
     const [name, setName] = useState("");
     const [job, setJob] = useState("");
@@ -16,23 +16,28 @@ const ModalEditUser = (props) => {
         let res = await putUpdateUser(name, job);
         if (res && res.updatedAt) {
             handleEditUserFromModal({
-                first_name: name, 
+                first_name: name,
                 id: dataUserEdit.id
-            }) 
+            })
             handleClose();
             toast.success('Update user succeed')
         }
     }
 
     useEffect(() => {
-        if(show) {
+        if (show) {
             setName(dataUserEdit.first_name);
         }
     }, [dataUserEdit, show])
 
     return (
         <>
-            <Modal show={show} onHide={handleClose}>
+            <Modal
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>Edit user</Modal.Title>
                 </Modal.Header>
