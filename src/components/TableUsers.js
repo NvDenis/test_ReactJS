@@ -4,10 +4,13 @@ import { fecthAllUser } from '../services/UserServices';
 import ReactPaginate from 'react-paginate';
 import ModalAddNewUser from './ModalAddNewUser';
 import ModalEditUser from './ModalEditUser';
-import { _, debounce } from "lodash"
+import { debounce } from "lodash"
+import _ from 'lodash'
 import ModalDeleteUser from './ModalDeleteUser';
-import { CSVLink, CSVDownload } from "react-csv";
+import Papa from 'papaparse';
+import { CSVLink } from "react-csv";
 import './TableUsers.scss'
+import { toast } from 'react-toastify';
 
 const TableUsers = () => {
 
@@ -89,7 +92,7 @@ const TableUsers = () => {
     const handleSearch = debounce((e) => {
         let term = e.target.value;
         if (term) {
-            let cloneListUsers = listUsers.slice();
+            let cloneListUsers = _.cloneDeep(listUsers);
 
             cloneListUsers = cloneListUsers.filter(item => item.email.includes(term));
             setListUsers(cloneListUsers);
@@ -99,12 +102,7 @@ const TableUsers = () => {
         }
     }, 500)
 
-    const csvData = [
-        ["firstname", "lastname", "email"],
-        ["Ahmed", "Tomi", "ah@smthing.co.com"],
-        ["Raed", "Labes", "rl@smthing.co.com"],
-        ["Yezzi", "Min l3b", "ymin@cocococo.com"]
-    ];
+    console.log(listUsers);
 
     const getUsersExport = (event, done) => {
         let data = [];
@@ -122,6 +120,57 @@ const TableUsers = () => {
             done();
 
         }
+    }
+
+    const handleImportCSV = (e) => {
+
+        if (e && e.target && e.target.files[0]) {
+            let file = e.target.files[0];
+
+            if (file.type !== 'text/csv') {
+                toast.error('Only accept csv files...')
+                return;
+            }
+
+            // Parse local CSV file
+            Papa.parse(file, {
+                complete: function (results) {
+                    let rawCSV = results.data;
+                    if (rawCSV.length > 0) {
+                        if (rawCSV[0] && rawCSV[0].length === 3) {
+                            if (
+                                rawCSV[0][0] !== 'email'
+                                || rawCSV[0][1] !== 'first_name'
+                                || rawCSV[0][2] !== 'last_name'
+                            ) {
+                                toast.error('Wrong format header CSV file!')
+                            } else {
+                                let data = [];
+                                rawCSV.map((item, index) => {
+                                    if (index > 0 && item.length === 3) {
+                                        let obj = {}
+                                        obj.email = item[0]
+                                        obj.first_name = item[1]
+                                        obj.last_name = item[2]
+                                        data.push(obj);
+                                    }
+                                })
+                                setListUsers(data)
+                                console.log('check data >>>', data);
+                            }
+
+                        } else {
+                            toast.error('Wrong format CSV file!')
+                        }
+
+                    } else {
+                        toast.error('Not found data on file CSV!')
+                    }
+
+                }
+            });
+
+        }
 
 
 
@@ -133,14 +182,18 @@ const TableUsers = () => {
             <div className='my-3 add-new'>
                 <span>List Users:</span>
                 <div className='group-btns'>
-
                     <label
                         className='btn btn-warning'
                         htmlFor='duycute'
                     >
-                        <i class="fa-solid fa-file-import"></i>  Import
+                        <i className="fa-solid fa-file-import"></i>  Import
                     </label>
-                    <input id='duycute' type='file' hidden />
+                    <input
+                        id='duycute'
+                        type='file'
+                        hidden
+                        onChange={e => handleImportCSV(e)}
+                    />
 
 
 
@@ -151,7 +204,7 @@ const TableUsers = () => {
                         asyncOnClick={true}
                         onClick={getUsersExport}
                     >
-                        <i class="fa-solid fa-file-arrow-down"></i>  Export
+                        <i className="fa-solid fa-file-arrow-down"></i>  Export
 
                     </CSVLink>
 
