@@ -102,7 +102,6 @@ const TableUsers = () => {
         }
     }, 500)
 
-    console.log(listUsers);
 
     const getUsersExport = (event, done) => {
         let data = [];
