@@ -1,12 +1,23 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LoginApi } from "../services/UserServices";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [isShowLoadingApi, setIsShowLoadingApi] = useState(false);
+
+    useEffect(() => {
+        let token = localStorage.getItem('token')
+        if(token) {
+            navigate('/');
+        }
+    }, [])
 
     const handleEmail = (e) => {
         setEmail(e.target.value);
@@ -21,13 +32,19 @@ const Login = () => {
             toast.error('Email/Password is required!');
             return;
         }
-
+        setIsShowLoadingApi(true);
         let res = await LoginApi(email, password);
-        
         if(res && res.token) {
             toast.success('Login succedd!')
             localStorage.setItem('token', res.token);
+            navigate('/')
+        } else {
+            if ( res && res.status === 400) {
+                toast.error(res.data.error)
+            }
         }
+        setIsShowLoadingApi(false);
+        
     }
 
     return (<>
@@ -56,6 +73,7 @@ const Login = () => {
                 disabled={password && email ? false : true}
                 onClick={() => handleLogin()}
             >
+                {isShowLoadingApi && <i class="fas fa-spinner fa-spin"></i> } &nbsp;    
                 Login
             </button>
             <div className="back" >
