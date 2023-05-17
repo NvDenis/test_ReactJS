@@ -35,7 +35,7 @@ const Login = () => {
             return;
         }
         setIsShowLoadingApi(true);
-        let res = await LoginApi(email, password);
+        let res = await LoginApi(email.trim(), password);
         if (res && res.token) {
             toast.success('Login succedd!')
             login(email, res.token);
@@ -54,6 +54,12 @@ const Login = () => {
         navigate('/')
     }
 
+    const handlePressEnter = (e) => {
+        if (e && e.key === 'Enter') {
+            handleLogin();
+        }
+    }
+
     return (<>
         <div className="login-container col-12 col-sm-4" >
             <div className="title">Log in</div>
@@ -70,6 +76,7 @@ const Login = () => {
                     placeholder="Password"
                     value={password}
                     onChange={e => handlePassword(e)}
+                    onKeyDown={(e) => handlePressEnter(e)}
                 />
                 <i className={isShowPassword ? "fa-solid fa-eye" : "fa-solid fa-eye-slash"}
                     onClick={() => setIsShowPassword(!isShowPassword)}
@@ -79,6 +86,7 @@ const Login = () => {
                 className={password && email ? "btn-login active" : 'btn-login'}
                 disabled={password && email ? false : true}
                 onClick={() => handleLogin()}
+
             >
                 {isShowLoadingApi && <i className="fas fa-spinner fa-spin"></i>} &nbsp;
                 Login
