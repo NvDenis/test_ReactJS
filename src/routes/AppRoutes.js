@@ -6,6 +6,7 @@ import Login from '../components/Login';
 import PrivateRoutes from './PrivateRoutes';
 
 const AppRoutes = () => {
+    console.log('abc');
     return (
         <>
             <Routes>
