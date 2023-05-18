@@ -6,7 +6,6 @@ import PrivateRoutes from './PrivateRoutes';
 import NotFound from './NotFound'
 
 const AppRoutes = () => {
-    console.log('abc');
     return (
         <>
             <Routes>

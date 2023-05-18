@@ -6,8 +6,13 @@ import { useContext, useEffect } from 'react';
 import { UserContext } from './context/UserContext';
 import AppRoutes from './routes/AppRoutes';
 import './App.scss';
+import { useSelector } from 'react-redux';
 
 function App() {
+
+  const dataUserRedux = useSelector(state => state.user.account)
+
+  console.log('check data redux', dataUserRedux);
 
   const { user, login } = useContext(UserContext);
 
